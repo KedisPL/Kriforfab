@@ -1,0 +1,23 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "net.fabricmc.fabric.mixin",
+  "refmap": "${mod_id}.refmap.json",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "networking.CommandManagerMixin",
+    "networking.CustomPayloadC2SPacketMixin",
+    "networking.CustomPayloadS2CPacketMixin",
+    "object.builder.DefaultAttributeRegistryAccessor",
+    "object.builder.DefaultAttributeRegistryMixin"
+  ],
+  "client": [
+    "client.rendering.fluid.FluidRendererMixin"
+  ],
+  "server": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+  }
+  

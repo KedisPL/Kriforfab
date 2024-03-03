@@ -1,0 +1,24 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "net.fabricmc.fabric.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "client.rendering.fluid.BlockStateMixin",
+    "forge.EntityDataSerializersMixin",
+    "forge.EventHooksMixin",
+    "forge.ForgeHooksMixin",
+    "forge.GameDataMixin",
+    "forge.ServerGamePacketListenerImplMixin",
+    "forge.network.NetworkFiltersMixin",
+    "networking.CustomPayloadC2SPacketMixin",
+    "networking.CustomPayloadS2CPacketMixin"
+  ],
+  "client": [
+  ],
+  "server": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

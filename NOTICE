@@ -1,0 +1,6 @@
+Changes in the files compared to the original Fabric API files:
+- Yarn mappings have been changed to Mojang mappings.
+
+Certain files are from the Forgified Fabric API so credits go for them https://github.com/Sinytra/ForgifiedFabricAPI.
+Certain files are from the Connector so credits go for them https://github.com/Sinytra/Connector/.
+Mod template from https://github.com/jaredlll08/MultiLoader-Template.

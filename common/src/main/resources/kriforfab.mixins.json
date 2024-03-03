@@ -1,0 +1,52 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "net.fabricmc.fabric.mixin",
+  "refmap": "${mod_id}.refmap.json",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "biome.BiomeSourceMixin",
+    "biome.ChunkNoiseSamplerMixin",
+    "biome.MultiNoiseBiomeSourceMixin",
+    "biome.MultiNoiseUtilMultiNoiseSamplerMixin",
+    "biome.NetherBiomePresetMixin",
+    "biome.NoiseConfigMixin",
+    "biome.TheEndBiomeSourceMixin",
+    "biome.modification.DynamicRegistryManagerImmutableImplMixin",
+    "biome.modification.MinecraftServerMixin",
+    "client.rendering.EntityModelLayersAccessor",
+    "event.lifecycle.MinecraftServerMixin",
+    "event.lifecycle.ServerWorldMixin",
+    "networking.ClientConnectionMixin",
+    "networking.EntityTrackerEntryMixin",
+    "networking.LoginQueryRequestS2CPacketMixin",
+    "networking.LoginQueryResponseC2SPacketMixin",
+    "networking.NetworkStateInternalPacketHandlerMixin",
+    "networking.PlayerManagerMixin",
+    "networking.ServerCommonNetworkHandlerMixin",
+    "networking.ServerConfigurationNetworkHandlerMixin",
+    "networking.ServerLoginNetworkHandlerMixin",
+    "networking.ServerPlayNetworkHandlerMixin",
+    "networking.accessor.EntityTrackerAccessor",
+    "networking.accessor.ServerCommonNetworkHandlerAccessor",
+    "networking.accessor.ServerLoginNetworkHandlerAccessor",
+    "networking.accessor.ThreadedAnvilChunkStorageAccessor"
+  ],
+  "client": [
+    "networking.client.ClientCommonNetworkHandlerMixin",
+    "networking.client.ClientConfigurationNetworkHandlerMixin",
+    "networking.client.ClientLoginNetworkHandlerMixin",
+    "networking.client.ClientPlayNetworkHandlerMixin",
+    "networking.client.accessor.ClientCommonNetworkHandlerAccessor",
+    "networking.client.accessor.ClientConfigurationNetworkHandlerAccessor",
+    "networking.client.accessor.ClientLoginNetworkHandlerAccessor",
+    "networking.client.accessor.ConnectScreenAccessor",
+    "networking.client.accessor.MinecraftClientAccessor"
+  ],
+  "server": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
+
