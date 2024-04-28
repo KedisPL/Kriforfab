@@ -7,7 +7,6 @@ Here are some of the features:
 
 - Fabric API Base
 - Fabric Biome API v1
-- Fabric Networking API v1
 - Forge object registration limits are removed with this library!
 - And a few other features!
 
