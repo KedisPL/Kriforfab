@@ -16,32 +16,9 @@
     "biome.modification.MinecraftServerMixin",
     "client.rendering.EntityModelLayersAccessor",
     "event.lifecycle.MinecraftServerMixin",
-    "event.lifecycle.ServerWorldMixin",
-    "networking.ClientConnectionMixin",
-    "networking.EntityTrackerEntryMixin",
-    "networking.LoginQueryRequestS2CPacketMixin",
-    "networking.LoginQueryResponseC2SPacketMixin",
-    "networking.NetworkStateInternalPacketHandlerMixin",
-    "networking.PlayerManagerMixin",
-    "networking.ServerCommonNetworkHandlerMixin",
-    "networking.ServerConfigurationNetworkHandlerMixin",
-    "networking.ServerLoginNetworkHandlerMixin",
-    "networking.ServerPlayNetworkHandlerMixin",
-    "networking.accessor.EntityTrackerAccessor",
-    "networking.accessor.ServerCommonNetworkHandlerAccessor",
-    "networking.accessor.ServerLoginNetworkHandlerAccessor",
-    "networking.accessor.ThreadedAnvilChunkStorageAccessor"
+    "event.lifecycle.ServerWorldMixin"
   ],
   "client": [
-    "networking.client.ClientCommonNetworkHandlerMixin",
-    "networking.client.ClientConfigurationNetworkHandlerMixin",
-    "networking.client.ClientLoginNetworkHandlerMixin",
-    "networking.client.ClientPlayNetworkHandlerMixin",
-    "networking.client.accessor.ClientCommonNetworkHandlerAccessor",
-    "networking.client.accessor.ClientConfigurationNetworkHandlerAccessor",
-    "networking.client.accessor.ClientLoginNetworkHandlerAccessor",
-    "networking.client.accessor.ConnectScreenAccessor",
-    "networking.client.accessor.MinecraftClientAccessor"
   ],
   "server": [
   ],

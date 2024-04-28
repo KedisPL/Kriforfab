@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.Overwrite;
 
 @Mixin(EventHooks.class)
 public class EventHooksMixin {
-    @Overwrite
+    /*@Overwrite
     public static void onCreativeModeTabBuildContents(CreativeModeTab tab, ResourceKey<CreativeModeTab> tabKey, CreativeModeTab.DisplayItemsGenerator originalGenerator, CreativeModeTab.ItemDisplayParameters params, CreativeModeTab.Output output) {
         final var entries = new MutableHashedLinkedMap<ItemStack, CreativeModeTab.TabVisibility>(ItemStackLinkedSet.TYPE_AND_TAG,
                 (key, left, right) -> CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
@@ -26,5 +26,5 @@ public class EventHooksMixin {
 
         for (var entry : entries)
             output.accept(entry.getKey(), entry.getValue());
-    }
+    }*/
 }

@@ -102,6 +102,10 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
         spawnSettings.freeze();
     }
 
+    boolean shouldRebuildFeatures() {
+        return generationSettings.rebuildFeatures;
+    }
+
     private class WeatherContextImpl implements WeatherContext {
         @Override
         public void setPrecipitation(boolean hasPrecipitation) {
@@ -193,7 +197,7 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
         private final Registry<PlacedFeature> features = registries.registryOrThrow(Registries.PLACED_FEATURE);
         private final BiomeGenerationSettings generationSettings = biome.getGenerationSettings();
 
-        private boolean rebuildFlowerFeatures;
+        boolean rebuildFeatures;
 
         /**
          * Unfreeze the immutable lists found in the generation settings, and make sure they're filled up to every
@@ -203,7 +207,7 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
             unfreezeCarvers();
             unfreezeFeatures();
 
-            rebuildFlowerFeatures = false;
+            rebuildFeatures = false;
         }
 
         private void unfreezeCarvers() {
@@ -224,7 +228,7 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
             freezeCarvers();
             freezeFeatures();
 
-            if (rebuildFlowerFeatures) {
+            if (rebuildFeatures) {
                 rebuildFlowerFeatures();
             }
         }
@@ -266,7 +270,7 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
 
             if (features.removeIf(feature -> feature.value() == placedFeature)) {
                 featureSteps.set(stepIndex, HolderSet.direct(features));
-                rebuildFlowerFeatures = true;
+                rebuildFeatures = true;
 
                 return true;
             }
@@ -287,7 +291,7 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
             featureSteps.set(index, plus(featureSteps.get(index), getEntry(features, entry)));
 
             // Ensure the list of flower features is up-to-date
-            rebuildFlowerFeatures = true;
+            rebuildFeatures = true;
         }
 
         @Override

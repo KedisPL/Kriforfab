@@ -19,6 +19,7 @@ package net.fabricmc.fabric.mixin.client.rendering.fluid;
 
 import com.google.common.collect.ImmutableMap;
 import com.mojang.serialization.MapCodec;
+import it.unimi.dsi.fastutil.objects.Reference2ObjectArrayMap;
 import net.fabricmc.fabric.api.client.render.fluid.v1.FluidRenderHandlerRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockAndTintGetter;
@@ -33,8 +34,8 @@ import org.spongepowered.asm.mixin.Mixin;
 @Mixin(BlockState.class)
 public abstract class BlockStateMixin extends BlockBehaviour.BlockStateBase implements IBlockStateExtension {
 
-    protected BlockStateMixin(Block block, ImmutableMap<Property<?>, Comparable<?>> propertyMap, MapCodec<BlockState> codec) {
-        super(block, propertyMap, codec);
+    protected BlockStateMixin(Block block, Reference2ObjectArrayMap<Property<?>, Comparable<?>> arrayMap, MapCodec<BlockState> blockStateMapCodec) {
+        super(block, arrayMap, blockStateMapCodec);
     }
 
     @Override

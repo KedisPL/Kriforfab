@@ -5,6 +5,7 @@ import com.google.common.collect.BiMap;
 import com.mojang.serialization.Lifecycle;
 import net.minecraft.core.Holder;
 import net.minecraft.core.MappedRegistry;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.GameData;
 import net.minecraftforge.registries.IForgeRegistry;
@@ -14,6 +15,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Desc;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.HashMap;
@@ -47,5 +49,10 @@ public abstract class ForgeRegistryMixin<V> implements IForgeRegistry<V> {
         Map<Object, V> copy = new HashMap<>(this.owners);
         this.owners.clear();
         this.owners.putAll(copy);
+    }
+
+    @Inject(method = "sync", at = @At(value = "NEW", target = "(Ljava/lang/String;)Ljava/lang/RuntimeException;"), remap = false, cancellable = true)
+    private void sync(ResourceLocation name, ForgeRegistry<V> from, CallbackInfo ci) {
+        ci.cancel();
     }
 }

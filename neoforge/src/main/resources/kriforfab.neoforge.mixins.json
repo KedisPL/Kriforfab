@@ -5,14 +5,9 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "client.rendering.fluid.BlockStateMixin",
-    "forge.EntityDataSerializersMixin",
     "forge.EventHooksMixin",
     "forge.ForgeHooksMixin",
-    "forge.GameDataMixin",
-    "forge.ServerGamePacketListenerImplMixin",
-    "forge.network.NetworkFiltersMixin",
-    "networking.CustomPayloadC2SPacketMixin",
-    "networking.CustomPayloadS2CPacketMixin"
+    "forge.GameDataMixin"
   ],
   "client": [
   ],

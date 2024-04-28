@@ -27,6 +27,8 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 import com.google.common.base.Stopwatch;
+import com.google.common.base.Suppliers;
+import net.minecraft.world.level.biome.FeatureSorter;
 import org.jetbrains.annotations.TestOnly;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -151,6 +153,18 @@ public class BiomeModificationImpl {
             // Re-freeze and apply certain cleanup actions
             if (modificationContext != null) {
                 modificationContext.freeze();
+
+                if (modificationContext.shouldRebuildFeatures()) {
+                    impl.registryOrThrow(Registries.LEVEL_STEM).stream().forEach(dimensionOptions -> {
+                        dimensionOptions.generator().featuresPerStep = Suppliers.memoize(
+                                () -> FeatureSorter.buildFeaturesPerStep(
+                                        List.copyOf(dimensionOptions.generator().getBiomeSource().possibleBiomes()),
+                                        (biomeEntry) -> (biomeEntry.value().generationSettings).features(),
+                                        true
+                                )
+                        );
+                    });
+                }
             }
         }
 
