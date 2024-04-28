@@ -5,11 +5,9 @@
   "refmap": "${mod_id}.refmap.json",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "networking.CommandManagerMixin",
-    "networking.CustomPayloadC2SPacketMixin",
-    "networking.CustomPayloadS2CPacketMixin",
     "object.builder.DefaultAttributeRegistryAccessor",
-    "object.builder.DefaultAttributeRegistryMixin"
+    "object.builder.DefaultAttributeRegistryMixin",
+    "biome.TheEndBiomeSourceMixin"
   ],
   "client": [
     "client.rendering.fluid.FluidRendererMixin"
