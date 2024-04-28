@@ -1,14 +1,11 @@
-package net.fabricmc.fabric.mixin.forge;
+package net.fabricmc.fabric.mixin.neoforge;
 
 import net.neoforged.neoforge.registries.GameData;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
-@Mixin(GameData.class)
+@Mixin(value = GameData.class, priority = 1)
 public class GameDataMixin {
     @Overwrite(remap = false)
     public static void vanillaSnapshot()

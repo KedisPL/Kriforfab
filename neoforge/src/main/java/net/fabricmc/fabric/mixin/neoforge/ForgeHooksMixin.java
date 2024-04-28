@@ -1,5 +1,5 @@
 // FROM Forgified Fabric API https://github.com/Sinytra/ForgifiedFabricAPI/
-package net.fabricmc.fabric.mixin.forge;
+package net.fabricmc.fabric.mixin.neoforge;
 
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.common.CommonHooks;
@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(CommonHooks.class)
+@Mixin(value = CommonHooks.class, priority = 1)
 public abstract class ForgeHooksMixin {
 
     @Inject(method = "getVanillaFluidType", at = @At(value = "NEW", target = "(Ljava/lang/String;)Ljava/lang/RuntimeException;"), remap = false, cancellable = true)

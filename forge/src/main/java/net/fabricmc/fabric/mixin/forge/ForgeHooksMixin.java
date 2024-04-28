@@ -1,5 +1,5 @@
 // FROM Forgified Fabric API https://github.com/Sinytra/ForgifiedFabricAPI/
-package net.fabricmc.fabric.mixin.forge;
+package net.fabricmc.fabric.mixin.neoforge;
 
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.common.ForgeHooks;

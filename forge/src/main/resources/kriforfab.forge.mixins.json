@@ -3,12 +3,12 @@
   "minVersion": "0.8",
   "package": "net.fabricmc.fabric.mixin",
   "refmap": "${mod_id}.refmap.json",
-  "compatibilityLevel": "JAVA_17",
+  "compatibilityLevel": "JAVA_21",
   "mixins": [
     "client.rendering.fluid.BlockStateMixin",
-    "forge.ForgeHooksMixin",
-    "forge.ForgeRegistryMixin",
-    "forge.GameDataMixin"
+    "neoforge.ForgeHooksMixin",
+    "neoforge.ForgeRegistryMixin",
+    "neoforge.GameDataMixin"
   ],
   "client": [
     "client.rendering.fluid.FluidRendererMixin"
