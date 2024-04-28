@@ -6,7 +6,6 @@
   "mixins": [
     "client.rendering.fluid.BlockStateMixin",
     "neoforge.EntityDataSerializersMixin",
-    "neoforge.EventHooksMixin",
     "neoforge.ForgeHooksMixin",
     "neoforge.GameDataMixin"
   ],
