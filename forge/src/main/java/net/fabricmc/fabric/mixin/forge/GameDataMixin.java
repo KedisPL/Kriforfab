@@ -1,4 +1,4 @@
-package net.fabricmc.fabric.mixin.neoforge;
+package net.fabricmc.fabric.mixin.forge;
 
 import net.minecraftforge.registries.GameData;
 import org.apache.logging.log4j.LogManager;

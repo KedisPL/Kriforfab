@@ -1,5 +1,11 @@
 package net.grupa_tkd.kriforfab.platform.services;
 
+import net.minecraft.world.level.biome.FeatureSorter;
+import net.minecraft.world.level.dimension.LevelStem;
+
+import java.util.List;
+import java.util.function.Supplier;
+
 public interface IPlatformHelper {
 
     /**
@@ -33,4 +39,6 @@ public interface IPlatformHelper {
 
         return isDevelopmentEnvironment() ? "development" : "production";
     }
+
+    Supplier<List<FeatureSorter.StepFeatureData>> featuresPerStep(LevelStem dimensionOptions);
 }

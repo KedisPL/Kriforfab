@@ -28,6 +28,7 @@ import java.util.function.Predicate;
 
 import com.google.common.base.Stopwatch;
 import com.google.common.base.Suppliers;
+import net.grupa_tkd.kriforfab.platform.KriforfabServices;
 import net.minecraft.world.level.biome.FeatureSorter;
 import org.jetbrains.annotations.TestOnly;
 import org.slf4j.Logger;
@@ -156,13 +157,7 @@ public class BiomeModificationImpl {
 
                 if (modificationContext.shouldRebuildFeatures()) {
                     impl.registryOrThrow(Registries.LEVEL_STEM).stream().forEach(dimensionOptions -> {
-                        dimensionOptions.generator().featuresPerStep = Suppliers.memoize(
-                                () -> FeatureSorter.buildFeaturesPerStep(
-                                        List.copyOf(dimensionOptions.generator().getBiomeSource().possibleBiomes()),
-                                        (biomeEntry) -> (biomeEntry.value().generationSettings).features(),
-                                        true
-                                )
-                        );
+                        dimensionOptions.generator().featuresPerStep = KriforfabServices.PLATFORM.featuresPerStep(dimensionOptions);
                     });
                 }
             }

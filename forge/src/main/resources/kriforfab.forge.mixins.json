@@ -6,9 +6,9 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "client.rendering.fluid.BlockStateMixin",
-    "neoforge.ForgeHooksMixin",
-    "neoforge.ForgeRegistryMixin",
-    "neoforge.GameDataMixin"
+    "forge.ForgeHooksMixin",
+    "forge.ForgeRegistryMixin",
+    "forge.GameDataMixin"
   ],
   "client": [
     "client.rendering.fluid.FluidRendererMixin"

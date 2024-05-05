@@ -15,8 +15,6 @@
  */
 // CHANGES:
 // Ported to forge
-
-
 package net.fabricmc.fabric.api.client.rendering.v1;
 
 import net.minecraft.client.model.geom.ModelLayerLocation;

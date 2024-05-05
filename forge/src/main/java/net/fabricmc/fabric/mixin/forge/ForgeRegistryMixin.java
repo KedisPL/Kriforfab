@@ -1,10 +1,12 @@
 // FROM Forgified Fabric API https://github.com/Sinytra/ForgifiedFabricAPI/
-package net.fabricmc.fabric.mixin.neoforge;
+package net.fabricmc.fabric.mixin.forge;
 
 import com.google.common.collect.BiMap;
 import com.mojang.serialization.Lifecycle;
 import net.minecraft.core.Holder;
 import net.minecraft.core.MappedRegistry;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.GameData;
@@ -28,7 +30,7 @@ public abstract class ForgeRegistryMixin<V> implements IForgeRegistry<V> {
     private BiMap<Object, V> owners;
 
     // Mixin AP complained about not finding the target method, so we use @Desc instead of a string
-    @Inject(target = @Desc(value = "getDelegateOrThrow", args = Object.class, ret = Holder.Reference.class), at = @At("HEAD"), cancellable = true, remap = false)
+    /*@Inject(target = @Desc(value = "getDelegateOrThrow", args = Object.class, ret = Holder.Reference.class), at = @At("HEAD"), cancellable = true, remap = false)
     private void getDelegateOrThrow(V value, CallbackInfoReturnable<Holder.Reference<V>> cir) {
         cir.setReturnValue(getDelegate(value).orElseGet(() -> {
             MappedRegistry<V> registry = GameData.getWrapper(getRegistryKey(), Lifecycle.stable());
@@ -40,7 +42,7 @@ public abstract class ForgeRegistryMixin<V> implements IForgeRegistry<V> {
                 return Holder.Reference.createIntrusive(registry.holderOwner(), value);
             }
         }));
-    }
+    }*/
 
     @Inject(method = "makeSnapshot", at = @At("HEAD"), remap = false)
     private void resetOwners(CallbackInfoReturnable<ForgeRegistry.Snapshot> cir) {
