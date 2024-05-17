@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "package": "net.grupa_tkd.kriforfab.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "neoforge.EntityDataSerializersMixin",
+    "neoforge.ForgeHooksMixin",
+    "neoforge.GameDataMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
