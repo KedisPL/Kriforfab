@@ -1,6 +1,7 @@
 dependencies {
     compileOnly(project(":fabric-api-base"))
     compileOnly(project(":kriforfab"))
+    compileOnly(project(":fake-forge"))
 }
 
 jar {

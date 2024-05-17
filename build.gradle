@@ -10,10 +10,17 @@ subprojects {
     apply plugin: "net.neoforged.gradle.userdev"
 
     version = mod_version
-    group = mod_group_id
+    group = "net.grupa_tkd.kriforfab"
 
     repositories {
         mavenLocal()
+        maven {
+            url = uri("https://maven.pkg.github.com/kedispl/Kriforfab")
+            credentials {
+                username = project.findProperty("gpr.user") ?: System.getenv("GITHUB_USERNAME")
+                password = project.findProperty("gpr.key") ?: System.getenv("GITHUB_TOKEN")
+            }
+        }
     }
 
     base {
@@ -168,15 +175,21 @@ subprojects {
     }
 
     // Example configuration to allow publishing using the maven-publish plugin
+    apply plugin: "maven-publish"
     publishing {
-        publications {
-            register('mavenJava' + project.name, MavenPublication) {
-                from components.java
-            }
-        }
         repositories {
             maven {
-                url "file://${project.projectDir}/repo"
+                name = "GitHubPackages"
+                url = uri("https://maven.pkg.github.com/kedispl/Kriforfab")
+                credentials {
+                    username = project.findProperty("gpr.user") ?: System.getenv("GITHUB_USERNAME")
+                    password = project.findProperty("gpr.key") ?: System.getenv("GITHUB_TOKEN")
+                }
+            }
+        }
+        publications {
+            gpr(MavenPublication) {
+                from(components.java)
             }
         }
     }

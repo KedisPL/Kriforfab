@@ -1,0 +1,60 @@
+{
+  "mappings": {
+    "net/fabricmc/fabric/mixin/biome/TheEndBiomeSourceMixin": {
+      "create": "Lnet/minecraft/world/level/biome/TheEndBiomeSource;m_254978_(Lnet/minecraft/core/HolderGetter;)Lnet/minecraft/world/level/biome/TheEndBiomeSource;",
+      "getNoiseBiome": "Lnet/minecraft/world/level/biome/TheEndBiomeSource;m_203407_(IIILnet/minecraft/world/level/biome/Climate$Sampler;)Lnet/minecraft/core/Holder;"
+    },
+    "net/fabricmc/fabric/mixin/event/lifecycle/MinecraftServerMixin": {
+      "Lnet/minecraft/server/MinecraftServer;tickChildren(Ljava/util/function/BooleanSupplier;)V": "Lnet/minecraft/server/MinecraftServer;m_5703_(Ljava/util/function/BooleanSupplier;)V",
+      "tickServer": "Lnet/minecraft/server/MinecraftServer;m_5705_(Ljava/util/function/BooleanSupplier;)V"
+    },
+    "net/fabricmc/fabric/mixin/client/rendering/EntityModelLayersAccessor": {
+      "ALL_MODELS": "f_171262_:Ljava/util/Set;"
+    },
+    "net/fabricmc/fabric/mixin/biome/ChunkNoiseSamplerMixin": {
+      "cachedClimateSampler": "Lnet/minecraft/world/level/levelgen/NoiseChunk;m_224359_(Lnet/minecraft/world/level/levelgen/NoiseRouter;Ljava/util/List;)Lnet/minecraft/world/level/biome/Climate$Sampler;"
+    },
+    "net/fabricmc/fabric/mixin/client/rendering/fluid/FluidRendererMixin": {
+      "setupSprites": "Lnet/minecraft/client/renderer/block/LiquidBlockRenderer;m_110944_()V",
+      "Lnet/minecraft/client/renderer/block/LiquidBlockRenderer;waterOverlay:Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;": "Lnet/minecraft/client/renderer/block/LiquidBlockRenderer;f_110942_:Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;",
+      "tesselate": "Lnet/minecraft/client/renderer/block/LiquidBlockRenderer;m_234369_(Lnet/minecraft/world/level/BlockAndTintGetter;Lnet/minecraft/core/BlockPos;Lcom/mojang/blaze3d/vertex/VertexConsumer;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/material/FluidState;)V"
+    },
+    "net/fabricmc/fabric/mixin/biome/BiomeSourceMixin": {
+      "possibleBiomes": "Lnet/minecraft/world/level/biome/BiomeSource;m_207840_()Ljava/util/Set;"
+    },
+    "net/fabricmc/fabric/mixin/event/lifecycle/ServerWorldMixin": {
+      "Lnet/minecraft/server/level/ServerLevel;handlingTick:Z": "Lnet/minecraft/server/level/ServerLevel;f_8557_:Z",
+      "tick": "Lnet/minecraft/server/level/ServerLevel;m_8793_(Ljava/util/function/BooleanSupplier;)V"
+    }
+  },
+  "data": {
+    "searge": {
+      "net/fabricmc/fabric/mixin/biome/TheEndBiomeSourceMixin": {
+        "create": "Lnet/minecraft/world/level/biome/TheEndBiomeSource;m_254978_(Lnet/minecraft/core/HolderGetter;)Lnet/minecraft/world/level/biome/TheEndBiomeSource;",
+        "getNoiseBiome": "Lnet/minecraft/world/level/biome/TheEndBiomeSource;m_203407_(IIILnet/minecraft/world/level/biome/Climate$Sampler;)Lnet/minecraft/core/Holder;"
+      },
+      "net/fabricmc/fabric/mixin/event/lifecycle/MinecraftServerMixin": {
+        "Lnet/minecraft/server/MinecraftServer;tickChildren(Ljava/util/function/BooleanSupplier;)V": "Lnet/minecraft/server/MinecraftServer;m_5703_(Ljava/util/function/BooleanSupplier;)V",
+        "tickServer": "Lnet/minecraft/server/MinecraftServer;m_5705_(Ljava/util/function/BooleanSupplier;)V"
+      },
+      "net/fabricmc/fabric/mixin/client/rendering/EntityModelLayersAccessor": {
+        "ALL_MODELS": "f_171262_:Ljava/util/Set;"
+      },
+      "net/fabricmc/fabric/mixin/biome/ChunkNoiseSamplerMixin": {
+        "cachedClimateSampler": "Lnet/minecraft/world/level/levelgen/NoiseChunk;m_224359_(Lnet/minecraft/world/level/levelgen/NoiseRouter;Ljava/util/List;)Lnet/minecraft/world/level/biome/Climate$Sampler;"
+      },
+      "net/fabricmc/fabric/mixin/client/rendering/fluid/FluidRendererMixin": {
+        "setupSprites": "Lnet/minecraft/client/renderer/block/LiquidBlockRenderer;m_110944_()V",
+        "Lnet/minecraft/client/renderer/block/LiquidBlockRenderer;waterOverlay:Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;": "Lnet/minecraft/client/renderer/block/LiquidBlockRenderer;f_110942_:Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;",
+        "tesselate": "Lnet/minecraft/client/renderer/block/LiquidBlockRenderer;m_234369_(Lnet/minecraft/world/level/BlockAndTintGetter;Lnet/minecraft/core/BlockPos;Lcom/mojang/blaze3d/vertex/VertexConsumer;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/material/FluidState;)V"
+      },
+      "net/fabricmc/fabric/mixin/biome/BiomeSourceMixin": {
+        "possibleBiomes": "Lnet/minecraft/world/level/biome/BiomeSource;m_207840_()Ljava/util/Set;"
+      },
+      "net/fabricmc/fabric/mixin/event/lifecycle/ServerWorldMixin": {
+        "Lnet/minecraft/server/level/ServerLevel;handlingTick:Z": "Lnet/minecraft/server/level/ServerLevel;f_8557_:Z",
+        "tick": "Lnet/minecraft/server/level/ServerLevel;m_8793_(Ljava/util/function/BooleanSupplier;)V"
+      }
+    }
+  }
+}

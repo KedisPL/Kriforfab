@@ -14,7 +14,7 @@ authors="${mod_authors}"
 description='''${mod_description}'''
 
 [[mixins]]
-config="fabric-biome-api-v1.mixins.json"
+config="fabric-biome-api-v1.neoforge.mixins.json"
 
 [[accessTransformers]]
 file="META-INF/neoforge.accesstransformer.cfg"

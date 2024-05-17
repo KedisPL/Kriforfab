@@ -1,0 +1,20 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "net.fabricmc.fabric.mixin.biome",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "BiomeSourceMixin",
+    "ChunkNoiseSamplerMixin",
+    "MultiNoiseBiomeSourceMixin",
+    "MultiNoiseUtilMultiNoiseSamplerMixin",
+    "NetherBiomePresetMixin",
+    "NoiseConfigMixin",
+    "TheEndBiomeSourceMixin",
+    "modification.DynamicRegistryManagerImmutableImplMixin",
+    "modification.MinecraftServerMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
