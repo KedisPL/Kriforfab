@@ -3,6 +3,13 @@ pluginManagement {
         mavenLocal()
         gradlePluginPortal()
         maven { url = 'https://maven.neoforged.net/releases' }
+        maven {
+            url = uri("https://maven.pkg.github.com/kedispl/Kriforfab")
+            credentials {
+                username = System.getenv("GITHUB_USERNAME")
+                password = System.getenv("GITHUB_TOKEN")
+            }
+        }
     }
 }
 

@@ -6,11 +6,7 @@ jarJar.enable()
 
 tasks.named('jarJar') {
     dependencies {
-        /*include(project(":fabric-api-base"))
-        include(project(":fabric-biome-api-v1"))
-        include(project(":fabric-lifecycle-events-v1"))
-        include(project(":fabric-object-builder-api-v1"))
-        include(project(":fabric-rendering-fluids-v1"))*/
+        jarJar "net.grupa_tkd.kriforfab:fabric-api-base:[0.4,0.5]"
     }
 }
 
