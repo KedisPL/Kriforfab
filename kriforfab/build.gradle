@@ -5,12 +5,12 @@ dependencies {
 jarJar.enable()
 
 dependencies {
-    jarJar "net.grupa_tkd.kriforfab:fabric-api-base:[0.4,)"
-    jarJar "net.grupa_tkd.kriforfab:fabric-rendering-v1:[0.4,)"
-    jarJar "net.grupa_tkd.kriforfab:fabric-lifecycle-events-v1:[0.4,)"
-    jarJar "net.grupa_tkd.kriforfab:fabric-rendering-fluids-v1:[0.4,)"
-    jarJar "net.grupa_tkd.kriforfab:fabric-biome-api-v1:[0.4,)"
-    jarJar "net.grupa_tkd.kriforfab:fabric-object-builder-api-v1:[0.4,)"
+    jarJar "net.grupa_tkd.kriforfab:fabric-api-base:[0.5,)"
+    jarJar "net.grupa_tkd.kriforfab:fabric-rendering-v1:[0.5,)"
+    jarJar "net.grupa_tkd.kriforfab:fabric-lifecycle-events-v1:[0.5,)"
+    jarJar "net.grupa_tkd.kriforfab:fabric-rendering-fluids-v1:[0.5,)"
+    jarJar "net.grupa_tkd.kriforfab:fabric-biome-api-v1:[0.5,)"
+    jarJar "net.grupa_tkd.kriforfab:fabric-object-builder-api-v1:[0.5,)"
 }
 
 jar {
