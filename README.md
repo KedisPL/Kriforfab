@@ -11,7 +11,7 @@ Here are some of the features:
 - And a few other features!
 
 # How to setup?
-Maybe I will write how to use it in your mod projects when it comes out of alpha, but for now it is an experimental project.
+Maybe I will write how to use it in your mod projects when it comes out of beta, but for now it is an experimental project.
 
 # Credits
 
