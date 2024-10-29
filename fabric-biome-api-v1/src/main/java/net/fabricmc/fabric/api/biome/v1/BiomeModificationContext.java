@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package net.fabricmc.fabric.api.biome.v1;
 
 import java.util.Optional;
@@ -78,7 +79,7 @@ public interface BiomeModificationContext {
         void setTemperatureModifier(Biome.TemperatureModifier temperatureModifier);
 
         /**
-         * @see Biome.ClimateSettings#downfall()
+         * @see Biome.ClimateSettings#temperature()
          * @see Biome.BiomeBuilder#downfall(float)
          */
         void setDownfall(float downfall);
@@ -313,33 +314,16 @@ public interface BiomeModificationContext {
         void addFeature(GenerationStep.Decoration step, ResourceKey<PlacedFeature> placedFeatureKey);
 
         /**
-         * Adds a configured carver to one of this biomes generation steps.
+         * Adds a configured carver to this biome.
          */
-        void addCarver(GenerationStep.Carving step, ResourceKey<ConfiguredWorldCarver<?>> carverKey);
+        void addCarver(ResourceKey<ConfiguredWorldCarver<?>> carverKey);
 
         /**
-         * Removes all carvers with the given key from one of this biomes generation steps.
+         * Removes all carvers with the given key from this biome.
          *
          * @return True if any carvers were removed.
          */
-        boolean removeCarver(GenerationStep.Carving step, ResourceKey<ConfiguredWorldCarver<?>> configuredCarverKey);
-
-        /**
-         * Removes all carvers with the given key from all of this biomes generation steps.
-         *
-         * @return True if any carvers were removed.
-         */
-        default boolean removeCarver(ResourceKey<ConfiguredWorldCarver<?>> configuredCarverKey) {
-            boolean anyFound = false;
-
-            for (GenerationStep.Carving step : GenerationStep.Carving.values()) {
-                if (removeCarver(step, configuredCarverKey)) {
-                    anyFound = true;
-                }
-            }
-
-            return anyFound;
-        }
+        boolean removeCarver(ResourceKey<ConfiguredWorldCarver<?>> configuredCarverKey);
     }
 
     interface SpawnSettingsContext {

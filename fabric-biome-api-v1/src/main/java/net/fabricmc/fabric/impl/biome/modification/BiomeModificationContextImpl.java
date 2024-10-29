@@ -15,6 +15,23 @@
  */
 // 1. Fabric API name and group to Kriforfab
 // 2. Changed Yarn mappings to official Mojang mappings
+// 3. climateSettings NeoForge fix
+/*
+ * Copyright (c) 2016, 2017, 2018, 2019 FabricMC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package net.fabricmc.fabric.impl.biome.modification;
 
 import java.util.ArrayList;
@@ -31,10 +48,11 @@ import java.util.stream.Collectors;
 import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import net.fabricmc.fabric.api.biome.v1.BiomeModificationContext;
+import net.grupa_tkd.kriforfab.more.BiomeMore;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import net.fabricmc.fabric.api.biome.v1.BiomeModificationContext;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
@@ -107,24 +125,25 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
     }
 
     private class WeatherContextImpl implements WeatherContext {
+        public BiomeMore biomeMore = ((BiomeMore)(Object)biome);
         @Override
         public void setPrecipitation(boolean hasPrecipitation) {
-            biome.climateSettings = new Biome.ClimateSettings(hasPrecipitation, biome.climateSettings.temperature(), biome.climateSettings.temperatureModifier(), biome.climateSettings.downfall());
+            biomeMore.setClimateSettings(new Biome.ClimateSettings(hasPrecipitation, biomeMore.getClimateSettings().temperature(), biomeMore.getClimateSettings().temperatureModifier(), biomeMore.getClimateSettings().downfall()));
         }
 
         @Override
         public void setTemperature(float temperature) {
-            biome.climateSettings = new Biome.ClimateSettings(biome.climateSettings.hasPrecipitation(), temperature, biome.climateSettings.temperatureModifier(), biome.climateSettings.downfall());
+            biomeMore.setClimateSettings(new Biome.ClimateSettings(biomeMore.getClimateSettings().hasPrecipitation(), temperature, biomeMore.getClimateSettings().temperatureModifier(), biomeMore.getClimateSettings().downfall()));
         }
 
         @Override
         public void setTemperatureModifier(Biome.TemperatureModifier temperatureModifier) {
-            biome.climateSettings = new Biome.ClimateSettings(biome.climateSettings.hasPrecipitation(), biome.climateSettings.temperature(), Objects.requireNonNull(temperatureModifier), biome.climateSettings.downfall());
+            biomeMore.setClimateSettings(new Biome.ClimateSettings(biomeMore.getClimateSettings().hasPrecipitation(), biomeMore.getClimateSettings().temperature(), Objects.requireNonNull(temperatureModifier), biomeMore.getClimateSettings().downfall()));
         }
 
         @Override
         public void setDownfall(float downfall) {
-            biome.climateSettings = new Biome.ClimateSettings(biome.climateSettings.hasPrecipitation(), biome.climateSettings.temperature(), biome.climateSettings.temperatureModifier(), downfall);
+            biomeMore.setClimateSettings(new Biome.ClimateSettings(biomeMore.getClimateSettings().hasPrecipitation(), biomeMore.getClimateSettings().temperature(), biomeMore.getClimateSettings().temperatureModifier(), downfall));
         }
     }
 
@@ -193,8 +212,8 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
     }
 
     private class GenerationSettingsContextImpl implements GenerationSettingsContext {
-        private final Registry<ConfiguredWorldCarver<?>> carvers = registries.registryOrThrow(Registries.CONFIGURED_CARVER);
-        private final Registry<PlacedFeature> features = registries.registryOrThrow(Registries.PLACED_FEATURE);
+        private final Registry<ConfiguredWorldCarver<?>> carvers = registries.lookupOrThrow(Registries.CONFIGURED_CARVER);
+        private final Registry<PlacedFeature> features = registries.lookupOrThrow(Registries.PLACED_FEATURE);
         private final BiomeGenerationSettings generationSettings = biome.getGenerationSettings();
 
         boolean rebuildFeatures;
@@ -204,17 +223,9 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
          * possible step if they're dense lists.
          */
         GenerationSettingsContextImpl() {
-            unfreezeCarvers();
             unfreezeFeatures();
 
             rebuildFeatures = false;
-        }
-
-        private void unfreezeCarvers() {
-            Map<GenerationStep.Carving, HolderSet<ConfiguredWorldCarver<?>>> carversByStep = new EnumMap<>(GenerationStep.Carving.class);
-            carversByStep.putAll(generationSettings.carvers);
-
-            generationSettings.carvers = carversByStep;
         }
 
         private void unfreezeFeatures() {
@@ -225,16 +236,11 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
          * Re-freeze the lists in the generation settings to immutable variants, also fixes the flower features.
          */
         public void freeze() {
-            freezeCarvers();
             freezeFeatures();
 
             if (rebuildFeatures) {
                 rebuildFlowerFeatures();
             }
-        }
-
-        private void freezeCarvers() {
-            generationSettings.carvers = ImmutableMap.copyOf(generationSettings.carvers);
         }
 
         private void freezeFeatures() {
@@ -295,22 +301,18 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
         }
 
         @Override
-        public void addCarver(GenerationStep.Carving step, ResourceKey<ConfiguredWorldCarver<?>> entry) {
+        public void addCarver(ResourceKey<ConfiguredWorldCarver<?>> entry) {
             // We do not need to delay evaluation of this since the registries are already fully built
-            generationSettings.carvers.put(step, plus(generationSettings.carvers.get(step), getEntry(carvers, entry)));
+            generationSettings.carvers = plus(generationSettings.carvers, getEntry(carvers, entry));
         }
 
         @Override
-        public boolean removeCarver(GenerationStep.Carving step, ResourceKey<ConfiguredWorldCarver<?>> configuredCarverKey) {
+        public boolean removeCarver(ResourceKey<ConfiguredWorldCarver<?>> configuredCarverKey) {
             ConfiguredWorldCarver<?> carver = getEntry(carvers, configuredCarverKey).value();
-            HolderSet<ConfiguredWorldCarver<?>> carvers = generationSettings.carvers.get(step);
-
-            if (carvers == null) return false;
-
-            List<Holder<ConfiguredWorldCarver<?>>> genCarvers = new ArrayList<>(carvers.stream().toList());
+            List<Holder<ConfiguredWorldCarver<?>>> genCarvers = new ArrayList<>(generationSettings.carvers.stream().toList());
 
             if (genCarvers.removeIf(entry -> entry.value() == carver)) {
-                generationSettings.carvers.put(step, HolderSet.direct(genCarvers));
+                generationSettings.carvers = HolderSet.direct(genCarvers);
                 return true;
             }
 
@@ -332,7 +334,7 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
      * forgot to data-gen the JSONs corresponding to their built-in objects.
      */
     private static <T> Holder.Reference<T> getEntry(Registry<T> registry, ResourceKey<T> key) {
-        Holder.Reference<T> entry = registry.getHolder(key).orElse(null);
+        Holder.Reference<T> entry = registry.get(key).orElse(null);
 
         if (entry == null) {
             // The key doesn't exist in the data packs

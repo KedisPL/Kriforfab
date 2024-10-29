@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package net.fabricmc.fabric.api.biome.v1;
 
 import java.util.function.Predicate;
-
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -53,9 +53,9 @@ public final class BiomeModifications {
      *
      * @see BiomeSelectors
      */
-    public static void addCarver(Predicate<BiomeSelectionContext> biomeSelector, GenerationStep.Carving step, ResourceKey<ConfiguredWorldCarver<?>> configuredCarverKey) {
+    public static void addCarver(Predicate<BiomeSelectionContext> biomeSelector, ResourceKey<ConfiguredWorldCarver<?>> configuredCarverKey) {
         create(configuredCarverKey.location()).add(ModificationPhase.ADDITIONS, biomeSelector, context -> {
-            context.getGenerationSettings().addCarver(step, configuredCarverKey);
+            context.getGenerationSettings().addCarver(configuredCarverKey);
         });
     }
 

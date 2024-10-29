@@ -1,3 +1,6 @@
+// 1. Fabric API name and group to Kriforfab.
+// 2. Changed Yarn mappings to official Mojang mappings.
+// 3. NeoForge fixes.
 /*
  * Copyright (c) 2016, 2017, 2018, 2019 FabricMC
  *
@@ -13,29 +16,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-// 1. Fabric API name and group to Kriforfab
-// 2. Changed Yarn mappings to official Mojang mappings
+
 package net.fabricmc.fabric.impl.biome.modification;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
+
 import com.google.common.base.Stopwatch;
+import com.google.common.base.Suppliers;
 import net.fabricmc.fabric.biome_api_init.BiomeApiCommon;
+import org.jetbrains.annotations.TestOnly;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import net.fabricmc.fabric.api.biome.v1.BiomeModificationContext;
 import net.fabricmc.fabric.api.biome.v1.BiomeSelectionContext;
 import net.fabricmc.fabric.api.biome.v1.ModificationPhase;
+import net.minecraft.core.MappedRegistry;
+import net.minecraft.core.RegistrationInfo;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.biome.Biome;
-import org.jetbrains.annotations.TestOnly;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.*;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
+import net.minecraft.world.level.biome.FeatureSorter;
 
 public class BiomeModificationImpl {
     private static final Logger LOGGER = LoggerFactory.getLogger(BiomeModificationImpl.class);
@@ -105,13 +116,13 @@ public class BiomeModificationImpl {
         BiomeModificationMarker modificationTracker = (BiomeModificationMarker) impl;
         modificationTracker.fabric_markModified();
 
-        Registry<Biome> biomes = impl.registryOrThrow(Registries.BIOME);
+        Registry<Biome> biomes = impl.lookupOrThrow(Registries.BIOME);
 
         // Build a list of all biome keys in ascending order of their raw-id to get a consistent result in case
         // someone does something stupid.
         List<ResourceKey<Biome>> keys = biomes.entrySet().stream()
                 .map(Map.Entry::getKey)
-                .sorted(Comparator.comparingInt(key -> biomes.getId(biomes.getOrThrow(key))))
+                .sorted(Comparator.comparingInt(key -> biomes.getId(biomes.getValueOrThrow(key))))
                 .toList();
 
         List<ModifierRecord> sortedModifiers = getSortedModifiers();
@@ -121,7 +132,7 @@ public class BiomeModificationImpl {
         int modifiersApplied = 0;
 
         for (ResourceKey<Biome> key : keys) {
-            Biome biome = biomes.getOrThrow(key);
+            Biome biome = biomes.getValueOrThrow(key);
 
             biomesProcessed++;
 
@@ -150,9 +161,15 @@ public class BiomeModificationImpl {
                 modificationContext.freeze();
 
                 if (modificationContext.shouldRebuildFeatures()) {
-                    impl.registryOrThrow(Registries.LEVEL_STEM).stream().forEach(dimensionOptions -> {
+                    impl.lookupOrThrow(Registries.LEVEL_STEM).stream().forEach(dimensionOptions -> {
                         dimensionOptions.generator().featuresPerStep = BiomeApiCommon.featuresPerStep(dimensionOptions);
                     });
+                }
+
+                if (biomes instanceof MappedRegistry<Biome> registry) {
+                    RegistrationInfo info = registry.registrationInfos.get(key);
+                    RegistrationInfo newInfo = new RegistrationInfo(Optional.empty(), info.lifecycle());
+                    registry.registrationInfos.put(key, newInfo);
                 }
             }
         }

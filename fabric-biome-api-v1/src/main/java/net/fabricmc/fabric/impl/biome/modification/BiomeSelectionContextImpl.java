@@ -1,3 +1,5 @@
+// 1. Fabric API name and group to Kriforfab
+// 2. Changed Yarn mappings to official Mojang mappings
 /*
  * Copyright (c) 2016, 2017, 2018, 2019 FabricMC
  *
@@ -13,8 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-// 1. Fabric API name and group to Kriforfab
-// 2. Changed Yarn mappings to official Mojang mappings
+
 package net.fabricmc.fabric.impl.biome.modification;
 
 import java.util.Optional;
@@ -41,7 +42,7 @@ public class BiomeSelectionContextImpl implements BiomeSelectionContext {
         this.dynamicRegistries = dynamicRegistries;
         this.key = key;
         this.biome = biome;
-        this.entry = dynamicRegistries.registryOrThrow(Registries.BIOME).getHolder(this.key).orElseThrow();
+        this.entry = dynamicRegistries.lookupOrThrow(Registries.BIOME).getOrThrow(this.key);
     }
 
     @Override
@@ -61,19 +62,19 @@ public class BiomeSelectionContextImpl implements BiomeSelectionContext {
 
     @Override
     public Optional<ResourceKey<ConfiguredFeature<?, ?>>> getFeatureKey(ConfiguredFeature<?, ?> configuredFeature) {
-        Registry<ConfiguredFeature<?, ?>> registry = dynamicRegistries.registryOrThrow(Registries.CONFIGURED_FEATURE);
+        Registry<ConfiguredFeature<?, ?>> registry = dynamicRegistries.lookupOrThrow(Registries.CONFIGURED_FEATURE);
         return registry.getResourceKey(configuredFeature);
     }
 
     @Override
     public Optional<ResourceKey<PlacedFeature>> getPlacedFeatureKey(PlacedFeature placedFeature) {
-        Registry<PlacedFeature> registry = dynamicRegistries.registryOrThrow(Registries.PLACED_FEATURE);
+        Registry<PlacedFeature> registry = dynamicRegistries.lookupOrThrow(Registries.PLACED_FEATURE);
         return registry.getResourceKey(placedFeature);
     }
 
     @Override
     public boolean validForStructure(ResourceKey<Structure> key) {
-        Structure instance = dynamicRegistries.registryOrThrow(Registries.STRUCTURE).get(key);
+        Structure instance = dynamicRegistries.lookupOrThrow(Registries.STRUCTURE).getValue(key);
 
         if (instance == null) {
             return false;
@@ -84,13 +85,13 @@ public class BiomeSelectionContextImpl implements BiomeSelectionContext {
 
     @Override
     public Optional<ResourceKey<Structure>> getStructureKey(Structure structure) {
-        Registry<Structure> registry = dynamicRegistries.registryOrThrow(Registries.STRUCTURE);
+        Registry<Structure> registry = dynamicRegistries.lookupOrThrow(Registries.STRUCTURE);
         return registry.getResourceKey(structure);
     }
 
     @Override
     public boolean canGenerateIn(ResourceKey<LevelStem> dimensionKey) {
-        LevelStem dimension = dynamicRegistries.registryOrThrow(Registries.LEVEL_STEM).get(dimensionKey);
+        LevelStem dimension = dynamicRegistries.lookupOrThrow(Registries.LEVEL_STEM).getValue(dimensionKey);
 
         if (dimension == null) {
             return false;
@@ -101,7 +102,7 @@ public class BiomeSelectionContextImpl implements BiomeSelectionContext {
 
     @Override
     public boolean hasTag(TagKey<Biome> tag) {
-        Registry<Biome> biomeRegistry = dynamicRegistries.registryOrThrow(Registries.BIOME);
-        return biomeRegistry.getHolderOrThrow(getBiomeKey()).is(tag);
+        Registry<Biome> biomeRegistry = dynamicRegistries.lookupOrThrow(Registries.BIOME);
+        return biomeRegistry.getOrThrow(getBiomeKey()).is(tag);
     }
 }
