@@ -30,7 +30,6 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 import com.google.common.base.Stopwatch;
-import com.google.common.base.Suppliers;
 import net.fabricmc.fabric.biome_api_init.BiomeApiCommon;
 import org.jetbrains.annotations.TestOnly;
 import org.slf4j.Logger;
@@ -46,7 +45,6 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.biome.FeatureSorter;
 
 public class BiomeModificationImpl {
     private static final Logger LOGGER = LoggerFactory.getLogger(BiomeModificationImpl.class);

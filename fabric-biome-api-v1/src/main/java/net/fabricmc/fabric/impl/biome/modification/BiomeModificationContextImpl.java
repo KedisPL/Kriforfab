@@ -13,24 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-// 1. Fabric API name and group to Kriforfab
-// 2. Changed Yarn mappings to official Mojang mappings
-// 3. climateSettings NeoForge fix
-/*
- * Copyright (c) 2016, 2017, 2018, 2019 FabricMC
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 
 package net.fabricmc.fabric.impl.biome.modification;
 
@@ -61,7 +43,8 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.sounds.Music;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.util.random.WeightedRandomList;
+import net.minecraft.util.random.Weighted;
+import net.minecraft.util.random.WeightedList;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.level.biome.AmbientAdditionsSettings;
@@ -206,8 +189,13 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
         }
 
         @Override
-        public void setMusic(Optional<Music> sound) {
+        public void setMusic(Optional<WeightedList<Music>> sound) {
             effects.backgroundMusic = Objects.requireNonNull(sound);
+        }
+
+        @Override
+        public void setMusicVolume(float volume) {
+            effects.backgroundMusicVolume = volume;
         }
     }
 
@@ -294,7 +282,14 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
                 featureSteps.add(HolderSet.direct(Collections.emptyList()));
             }
 
-            featureSteps.set(index, plus(featureSteps.get(index), getEntry(features, entry)));
+            Holder.Reference<PlacedFeature> feature = getEntry(features, entry);
+
+            // Don't add the feature if it's already present
+            if (featureSteps.get(index).contains(feature)) {
+                return;
+            }
+
+            featureSteps.set(index, plus(featureSteps.get(index), feature));
 
             // Ensure the list of flower features is up-to-date
             rebuildFeatures = true;
@@ -346,7 +341,7 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
 
     private class SpawnSettingsContextImpl implements SpawnSettingsContext {
         private final MobSpawnSettings spawnSettings = biome.getMobSettings();
-        private final EnumMap<MobCategory, List<MobSpawnSettings.SpawnerData>> fabricSpawners = new EnumMap<>(MobCategory.class);
+        private final EnumMap<MobCategory, List<Weighted<MobSpawnSettings.SpawnerData>>> fabricSpawners = new EnumMap<>(MobCategory.class);
 
         SpawnSettingsContextImpl() {
             unfreezeSpawners();
@@ -357,7 +352,7 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
             fabricSpawners.clear();
 
             for (MobCategory spawnGroup : MobCategory.values()) {
-                WeightedRandomList<MobSpawnSettings.SpawnerData> entries = spawnSettings.spawners.get(spawnGroup);
+                WeightedList<MobSpawnSettings.SpawnerData> entries = spawnSettings.spawners.get(spawnGroup);
 
                 if (entries != null) {
                     fabricSpawners.put(spawnGroup, new ArrayList<>(entries.unwrap()));
@@ -377,13 +372,13 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
         }
 
         private void freezeSpawners() {
-            Map<MobCategory, WeightedRandomList<MobSpawnSettings.SpawnerData>> spawners = new HashMap<>(spawnSettings.spawners);
+            Map<MobCategory, WeightedList<MobSpawnSettings.SpawnerData>> spawners = new HashMap<>(spawnSettings.spawners);
 
-            for (Map.Entry<MobCategory, List<MobSpawnSettings.SpawnerData>> entry : fabricSpawners.entrySet()) {
+            for (Map.Entry<MobCategory, List<Weighted<MobSpawnSettings.SpawnerData>>> entry : fabricSpawners.entrySet()) {
                 if (entry.getValue().isEmpty()) {
-                    spawners.put(entry.getKey(), WeightedRandomList.create());
+                    spawners.put(entry.getKey(), WeightedList.of());
                 } else {
-                    spawners.put(entry.getKey(), WeightedRandomList.create(entry.getValue()));
+                    spawners.put(entry.getKey(), WeightedList.of(entry.getValue()));
                 }
             }
 
@@ -400,11 +395,11 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
         }
 
         @Override
-        public void addSpawn(MobCategory spawnGroup, MobSpawnSettings.SpawnerData spawnEntry) {
+        public void addSpawn(MobCategory spawnGroup, MobSpawnSettings.SpawnerData spawnEntry, int weight) {
             Objects.requireNonNull(spawnGroup);
             Objects.requireNonNull(spawnEntry);
 
-            fabricSpawners.get(spawnGroup).add(spawnEntry);
+            fabricSpawners.get(spawnGroup).add(new Weighted<>(spawnEntry, weight));
         }
 
         @Override
@@ -412,7 +407,7 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
             boolean anyRemoved = false;
 
             for (MobCategory group : MobCategory.values()) {
-                if (fabricSpawners.get(group).removeIf(entry -> predicate.test(group, entry))) {
+                if (fabricSpawners.get(group).removeIf(entry -> predicate.test(group, entry.value()))) {
                     anyRemoved = true;
                 }
             }

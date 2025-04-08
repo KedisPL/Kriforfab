@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package net.fabricmc.fabric.api.biome.v1;
 
 import java.util.Collection;
@@ -23,6 +24,7 @@ import com.google.common.collect.ImmutableSet;
 import net.fabricmc.fabric.impl.biome.modification.BuiltInRegistryKeys;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.TagKey;
+import net.minecraft.util.random.Weighted;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.level.biome.Biome;
@@ -144,8 +146,8 @@ public final class BiomeSelectors {
             MobSpawnSettings spawnSettings = context.getBiome().getMobSettings();
 
             for (MobCategory spawnGroup : MobCategory.values()) {
-                for (MobSpawnSettings.SpawnerData spawnEntry : spawnSettings.getMobs(spawnGroup).unwrap()) {
-                    if (entityTypes.contains(spawnEntry.type)) {
+                for (Weighted<MobSpawnSettings.SpawnerData> spawnEntry : spawnSettings.getMobs(spawnGroup).unwrap()) {
+                    if (entityTypes.contains(spawnEntry.value().type())) {
                         return true;
                     }
                 }

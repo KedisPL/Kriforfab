@@ -77,7 +77,7 @@ public final class BiomeModifications {
         Preconditions.checkState(BuiltInRegistries.ENTITY_TYPE.getResourceKey(entityType).isPresent(), "Unregistered entity type: %s", entityType);
 
         create(id).add(ModificationPhase.ADDITIONS, biomeSelector, context -> {
-            context.getSpawnSettings().addSpawn(spawnGroup, new MobSpawnSettings.SpawnerData(entityType, weight, minGroupSize, maxGroupSize));
+            context.getSpawnSettings().addSpawn(spawnGroup, new MobSpawnSettings.SpawnerData(entityType, minGroupSize, maxGroupSize), weight);
         });
     }
 

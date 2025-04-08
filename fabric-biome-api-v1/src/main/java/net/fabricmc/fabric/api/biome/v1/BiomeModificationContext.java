@@ -23,6 +23,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.sounds.Music;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.util.random.WeightedList;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.level.biome.AmbientAdditionsSettings;
@@ -79,7 +80,7 @@ public interface BiomeModificationContext {
         void setTemperatureModifier(Biome.TemperatureModifier temperatureModifier);
 
         /**
-         * @see Biome.ClimateSettings#temperature()
+         * @see Biome.ClimateSettings#downfall()
          * @see Biome.BiomeBuilder#downfall(float)
          */
         void setDownfall(float downfall);
@@ -268,14 +269,22 @@ public interface BiomeModificationContext {
          * @see BiomeSpecialEffects#getBackgroundMusic()
          * @see BiomeSpecialEffects.Builder#backgroundMusic(Music)
          */
-        void setMusic(Optional<Music> sound);
+        void setMusic(Optional<WeightedList<Music>> sound);
+
+        /**
+         * @see BiomeSpecialEffects#getBackgroundMusic()
+         * @see BiomeSpecialEffects.Builder#backgroundMusic(Music)
+         */
+        default void setMusic(@NotNull WeightedList<Music> sound) {
+            setMusic(Optional.of(sound));
+        }
 
         /**
          * @see BiomeSpecialEffects#getBackgroundMusic()
          * @see BiomeSpecialEffects.Builder#backgroundMusic(Music)
          */
         default void setMusic(@NotNull Music sound) {
-            setMusic(Optional.of(sound));
+            setMusic(WeightedList.of(sound));
         }
 
         /**
@@ -285,6 +294,12 @@ public interface BiomeModificationContext {
         default void clearMusic() {
             setMusic(Optional.empty());
         }
+
+        /**
+         * @see BiomeSpecialEffects#getBackgroundMusicVolume()
+         * @see BiomeSpecialEffects.Builder#backgroundMusicVolume(float)
+         */
+        void setMusicVolume(float volume);
     }
 
     interface GenerationSettingsContext {
@@ -341,7 +356,7 @@ public interface BiomeModificationContext {
          * @see MobSpawnSettings#getMobs(MobCategory)
          * @see MobSpawnSettings.Builder#addSpawn(MobCategory, MobSpawnSettings.SpawnerData)
          */
-        void addSpawn(MobCategory spawnGroup, MobSpawnSettings.SpawnerData spawnEntry);
+        void addSpawn(MobCategory spawnGroup, MobSpawnSettings.SpawnerData spawnEntry, int weight);
 
         /**
          * Removes any spawns matching the given predicate from this biome, and returns true if any matched.
@@ -358,7 +373,7 @@ public interface BiomeModificationContext {
          * @return True if any spawns were removed.
          */
         default boolean removeSpawnsOfEntityType(EntityType<?> entityType) {
-            return removeSpawns((spawnGroup, spawnEntry) -> spawnEntry.type == entityType);
+            return removeSpawns((spawnGroup, spawnEntry) -> spawnEntry.type() == entityType);
         }
 
         /**

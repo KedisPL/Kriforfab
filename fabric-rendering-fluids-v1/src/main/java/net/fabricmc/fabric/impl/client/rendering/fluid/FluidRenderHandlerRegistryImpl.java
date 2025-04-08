@@ -114,7 +114,7 @@ public class FluidRenderHandlerRegistryImpl implements FluidRenderHandlerRegistr
 
         TextureAtlas texture = Minecraft.getInstance()
                 .getModelManager()
-                .getAtlas(InventoryMenu.BLOCK_ATLAS);
+                .getAtlas(TextureAtlas.LOCATION_BLOCKS);
 
         for (FluidRenderHandler handler : handlers.values()) {
             handler.reloadTextures(texture);

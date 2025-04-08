@@ -1,5 +1,3 @@
-// 1. Fabric API name and group to Kriforfab
-// 2. Changed Yarn mappings to official Mojang mappings
 /*
  * Copyright (c) 2016, 2017, 2018, 2019 FabricMC
  *
@@ -15,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+// 1. Fabric API name and group to Kriforfab
+// 2. Changed Yarn mappings to official Mojang mappings
 
 package net.fabricmc.fabric.impl.biome.modification;
 
