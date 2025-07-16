@@ -15,7 +15,6 @@
  */
 // 1. Fabric API name and group to Kriforfab
 // 2. Changed Yarn mappings to official Mojang mappings
-
 package net.fabricmc.fabric.impl.biome.modification;
 
 import net.minecraft.core.HolderGetter;

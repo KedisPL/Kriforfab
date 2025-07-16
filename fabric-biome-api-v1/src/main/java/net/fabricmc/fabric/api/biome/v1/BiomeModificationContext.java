@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package net.fabricmc.fabric.api.biome.v1;
 
 import java.util.Optional;
@@ -23,7 +22,6 @@ import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.sounds.Music;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.util.random.WeightedList;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.level.biome.AmbientAdditionsSettings;
@@ -269,22 +267,14 @@ public interface BiomeModificationContext {
          * @see BiomeSpecialEffects#getBackgroundMusic()
          * @see BiomeSpecialEffects.Builder#backgroundMusic(Music)
          */
-        void setMusic(Optional<WeightedList<Music>> sound);
-
-        /**
-         * @see BiomeSpecialEffects#getBackgroundMusic()
-         * @see BiomeSpecialEffects.Builder#backgroundMusic(Music)
-         */
-        default void setMusic(@NotNull WeightedList<Music> sound) {
-            setMusic(Optional.of(sound));
-        }
+        void setMusic(Optional<Music> sound);
 
         /**
          * @see BiomeSpecialEffects#getBackgroundMusic()
          * @see BiomeSpecialEffects.Builder#backgroundMusic(Music)
          */
         default void setMusic(@NotNull Music sound) {
-            setMusic(WeightedList.of(sound));
+            setMusic(Optional.of(sound));
         }
 
         /**
@@ -294,12 +284,6 @@ public interface BiomeModificationContext {
         default void clearMusic() {
             setMusic(Optional.empty());
         }
-
-        /**
-         * @see BiomeSpecialEffects#getBackgroundMusicVolume()
-         * @see BiomeSpecialEffects.Builder#backgroundMusicVolume(float)
-         */
-        void setMusicVolume(float volume);
     }
 
     interface GenerationSettingsContext {
@@ -329,16 +313,33 @@ public interface BiomeModificationContext {
         void addFeature(GenerationStep.Decoration step, ResourceKey<PlacedFeature> placedFeatureKey);
 
         /**
-         * Adds a configured carver to this biome.
+         * Adds a configured carver to one of this biomes generation steps.
          */
-        void addCarver(ResourceKey<ConfiguredWorldCarver<?>> carverKey);
+        void addCarver(GenerationStep.Carving step, ResourceKey<ConfiguredWorldCarver<?>> carverKey);
 
         /**
-         * Removes all carvers with the given key from this biome.
+         * Removes all carvers with the given key from one of this biomes generation steps.
          *
          * @return True if any carvers were removed.
          */
-        boolean removeCarver(ResourceKey<ConfiguredWorldCarver<?>> configuredCarverKey);
+        boolean removeCarver(GenerationStep.Carving step, ResourceKey<ConfiguredWorldCarver<?>> configuredCarverKey);
+
+        /**
+         * Removes all carvers with the given key from all of this biomes generation steps.
+         *
+         * @return True if any carvers were removed.
+         */
+        default boolean removeCarver(ResourceKey<ConfiguredWorldCarver<?>> configuredCarverKey) {
+            boolean anyFound = false;
+
+            for (GenerationStep.Carving step : GenerationStep.Carving.values()) {
+                if (removeCarver(step, configuredCarverKey)) {
+                    anyFound = true;
+                }
+            }
+
+            return anyFound;
+        }
     }
 
     interface SpawnSettingsContext {
@@ -356,7 +357,7 @@ public interface BiomeModificationContext {
          * @see MobSpawnSettings#getMobs(MobCategory)
          * @see MobSpawnSettings.Builder#addSpawn(MobCategory, MobSpawnSettings.SpawnerData)
          */
-        void addSpawn(MobCategory spawnGroup, MobSpawnSettings.SpawnerData spawnEntry, int weight);
+        void addSpawn(MobCategory spawnGroup, MobSpawnSettings.SpawnerData spawnEntry);
 
         /**
          * Removes any spawns matching the given predicate from this biome, and returns true if any matched.
@@ -373,7 +374,7 @@ public interface BiomeModificationContext {
          * @return True if any spawns were removed.
          */
         default boolean removeSpawnsOfEntityType(EntityType<?> entityType) {
-            return removeSpawns((spawnGroup, spawnEntry) -> spawnEntry.type() == entityType);
+            return removeSpawns((spawnGroup, spawnEntry) -> spawnEntry.type == entityType);
         }
 
         /**

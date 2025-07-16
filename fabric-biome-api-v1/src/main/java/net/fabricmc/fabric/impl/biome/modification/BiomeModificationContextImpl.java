@@ -13,7 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+// 1. Fabric API name and group to Kriforfab
+// 2. Changed Yarn mappings to official Mojang mappings
 package net.fabricmc.fabric.impl.biome.modification;
 
 import java.util.ArrayList;
@@ -30,11 +31,11 @@ import java.util.stream.Collectors;
 import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import net.fabricmc.fabric.api.biome.v1.BiomeModificationContext;
 import net.grupa_tkd.kriforfab.more.BiomeMore;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import net.fabricmc.fabric.api.biome.v1.BiomeModificationContext;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
@@ -43,8 +44,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.sounds.Music;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.util.random.Weighted;
-import net.minecraft.util.random.WeightedList;
+import net.minecraft.util.random.WeightedRandomList;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.level.biome.AmbientAdditionsSettings;
@@ -189,19 +189,14 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
         }
 
         @Override
-        public void setMusic(Optional<WeightedList<Music>> sound) {
+        public void setMusic(Optional<Music> sound) {
             effects.backgroundMusic = Objects.requireNonNull(sound);
-        }
-
-        @Override
-        public void setMusicVolume(float volume) {
-            effects.backgroundMusicVolume = volume;
         }
     }
 
     private class GenerationSettingsContextImpl implements GenerationSettingsContext {
-        private final Registry<ConfiguredWorldCarver<?>> carvers = registries.lookupOrThrow(Registries.CONFIGURED_CARVER);
-        private final Registry<PlacedFeature> features = registries.lookupOrThrow(Registries.PLACED_FEATURE);
+        private final Registry<ConfiguredWorldCarver<?>> carvers = registries.registryOrThrow(Registries.CONFIGURED_CARVER);
+        private final Registry<PlacedFeature> features = registries.registryOrThrow(Registries.PLACED_FEATURE);
         private final BiomeGenerationSettings generationSettings = biome.getGenerationSettings();
 
         boolean rebuildFeatures;
@@ -211,9 +206,17 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
          * possible step if they're dense lists.
          */
         GenerationSettingsContextImpl() {
+            unfreezeCarvers();
             unfreezeFeatures();
 
             rebuildFeatures = false;
+        }
+
+        private void unfreezeCarvers() {
+            Map<GenerationStep.Carving, HolderSet<ConfiguredWorldCarver<?>>> carversByStep = new EnumMap<>(GenerationStep.Carving.class);
+            carversByStep.putAll(generationSettings.carvers);
+
+            generationSettings.carvers = carversByStep;
         }
 
         private void unfreezeFeatures() {
@@ -224,11 +227,16 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
          * Re-freeze the lists in the generation settings to immutable variants, also fixes the flower features.
          */
         public void freeze() {
+            freezeCarvers();
             freezeFeatures();
 
             if (rebuildFeatures) {
                 rebuildFlowerFeatures();
             }
+        }
+
+        private void freezeCarvers() {
+            generationSettings.carvers = ImmutableMap.copyOf(generationSettings.carvers);
         }
 
         private void freezeFeatures() {
@@ -282,32 +290,29 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
                 featureSteps.add(HolderSet.direct(Collections.emptyList()));
             }
 
-            Holder.Reference<PlacedFeature> feature = getEntry(features, entry);
-
-            // Don't add the feature if it's already present
-            if (featureSteps.get(index).contains(feature)) {
-                return;
-            }
-
-            featureSteps.set(index, plus(featureSteps.get(index), feature));
+            featureSteps.set(index, plus(featureSteps.get(index), getEntry(features, entry)));
 
             // Ensure the list of flower features is up-to-date
             rebuildFeatures = true;
         }
 
         @Override
-        public void addCarver(ResourceKey<ConfiguredWorldCarver<?>> entry) {
+        public void addCarver(GenerationStep.Carving step, ResourceKey<ConfiguredWorldCarver<?>> entry) {
             // We do not need to delay evaluation of this since the registries are already fully built
-            generationSettings.carvers = plus(generationSettings.carvers, getEntry(carvers, entry));
+            generationSettings.carvers.put(step, plus(generationSettings.carvers.get(step), getEntry(carvers, entry)));
         }
 
         @Override
-        public boolean removeCarver(ResourceKey<ConfiguredWorldCarver<?>> configuredCarverKey) {
+        public boolean removeCarver(GenerationStep.Carving step, ResourceKey<ConfiguredWorldCarver<?>> configuredCarverKey) {
             ConfiguredWorldCarver<?> carver = getEntry(carvers, configuredCarverKey).value();
-            List<Holder<ConfiguredWorldCarver<?>>> genCarvers = new ArrayList<>(generationSettings.carvers.stream().toList());
+            HolderSet<ConfiguredWorldCarver<?>> carvers = generationSettings.carvers.get(step);
+
+            if (carvers == null) return false;
+
+            List<Holder<ConfiguredWorldCarver<?>>> genCarvers = new ArrayList<>(carvers.stream().toList());
 
             if (genCarvers.removeIf(entry -> entry.value() == carver)) {
-                generationSettings.carvers = HolderSet.direct(genCarvers);
+                generationSettings.carvers.put(step, HolderSet.direct(genCarvers));
                 return true;
             }
 
@@ -329,7 +334,7 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
      * forgot to data-gen the JSONs corresponding to their built-in objects.
      */
     private static <T> Holder.Reference<T> getEntry(Registry<T> registry, ResourceKey<T> key) {
-        Holder.Reference<T> entry = registry.get(key).orElse(null);
+        Holder.Reference<T> entry = registry.getHolder(key).orElse(null);
 
         if (entry == null) {
             // The key doesn't exist in the data packs
@@ -341,7 +346,7 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
 
     private class SpawnSettingsContextImpl implements SpawnSettingsContext {
         private final MobSpawnSettings spawnSettings = biome.getMobSettings();
-        private final EnumMap<MobCategory, List<Weighted<MobSpawnSettings.SpawnerData>>> fabricSpawners = new EnumMap<>(MobCategory.class);
+        private final EnumMap<MobCategory, List<MobSpawnSettings.SpawnerData>> fabricSpawners = new EnumMap<>(MobCategory.class);
 
         SpawnSettingsContextImpl() {
             unfreezeSpawners();
@@ -352,7 +357,7 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
             fabricSpawners.clear();
 
             for (MobCategory spawnGroup : MobCategory.values()) {
-                WeightedList<MobSpawnSettings.SpawnerData> entries = spawnSettings.spawners.get(spawnGroup);
+                WeightedRandomList<MobSpawnSettings.SpawnerData> entries = spawnSettings.spawners.get(spawnGroup);
 
                 if (entries != null) {
                     fabricSpawners.put(spawnGroup, new ArrayList<>(entries.unwrap()));
@@ -372,13 +377,13 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
         }
 
         private void freezeSpawners() {
-            Map<MobCategory, WeightedList<MobSpawnSettings.SpawnerData>> spawners = new HashMap<>(spawnSettings.spawners);
+            Map<MobCategory, WeightedRandomList<MobSpawnSettings.SpawnerData>> spawners = new HashMap<>(spawnSettings.spawners);
 
-            for (Map.Entry<MobCategory, List<Weighted<MobSpawnSettings.SpawnerData>>> entry : fabricSpawners.entrySet()) {
+            for (Map.Entry<MobCategory, List<MobSpawnSettings.SpawnerData>> entry : fabricSpawners.entrySet()) {
                 if (entry.getValue().isEmpty()) {
-                    spawners.put(entry.getKey(), WeightedList.of());
+                    spawners.put(entry.getKey(), WeightedRandomList.create());
                 } else {
-                    spawners.put(entry.getKey(), WeightedList.of(entry.getValue()));
+                    spawners.put(entry.getKey(), WeightedRandomList.create(entry.getValue()));
                 }
             }
 
@@ -395,11 +400,11 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
         }
 
         @Override
-        public void addSpawn(MobCategory spawnGroup, MobSpawnSettings.SpawnerData spawnEntry, int weight) {
+        public void addSpawn(MobCategory spawnGroup, MobSpawnSettings.SpawnerData spawnEntry) {
             Objects.requireNonNull(spawnGroup);
             Objects.requireNonNull(spawnEntry);
 
-            fabricSpawners.get(spawnGroup).add(new Weighted<>(spawnEntry, weight));
+            fabricSpawners.get(spawnGroup).add(spawnEntry);
         }
 
         @Override
@@ -407,7 +412,7 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
             boolean anyRemoved = false;
 
             for (MobCategory group : MobCategory.values()) {
-                if (fabricSpawners.get(group).removeIf(entry -> predicate.test(group, entry.value()))) {
+                if (fabricSpawners.get(group).removeIf(entry -> predicate.test(group, entry))) {
                     anyRemoved = true;
                 }
             }
