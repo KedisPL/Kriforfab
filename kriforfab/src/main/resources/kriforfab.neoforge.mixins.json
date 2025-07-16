@@ -3,6 +3,7 @@
   "package": "net.grupa_tkd.kriforfab.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "BiomeMixin",
     "neoforge.EntityDataSerializersMixin",
     "neoforge.ForgeHooksMixin",
     "neoforge.GameDataMixin"
